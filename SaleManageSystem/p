@@ -1,0 +1,171 @@
+import 'Customer.dart';
+import 'Payment.dart';
+import 'Product.dart';
+import 'Purchase.dart';
+import 'Supplier.dart';
+
+  void main() {
+
+    var customer1 = Customer(3031122880233,'ALI', 'Ali112@mail.com','123456789','cairo',0123456789012);
+    customer1.displayInfo();
+
+
+    var supplier1 = Supplier(3031122880233,'Sema', 'Sema112@mail.com','123456789','cairo',0123456789012);
+    supplier1.displayInfo();
+    var product1 = Product('Mobile', 1000.0);
+
+
+    var purchase = Purchase(customer1, supplier1, product1, 5);
+    purchase.processPurchase();
+
+
+    var payment = Payment(customer1, 200.0);
+    payment.processPayment();
+  }
+  abstract class person {
+     int? _id;
+     String name;
+     String _email;
+     String _password;
+     String _address;
+     int _mobile;
+
+
+     person(this._id, this.name, this._email, this._password, this._address,
+         this._mobile);
+
+     set id(int value) {
+       if (value
+           .toString()
+           .length == 14) {
+         _id = value;
+       }
+       else {
+         throw Exception("Invalid id");
+       }
+     }
+
+     String get email => _email;
+
+     set email(String value) {
+       final bool emailValid = RegExp(
+         r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+       ).hasMatch(value);
+
+       if (emailValid) {
+         _email = value;
+       } else {
+         throw Exception('Invalid email');
+       }
+     }
+
+     int get mobile => _mobile;
+
+     set mobile(int value) {
+       _mobile = value;
+       if (value
+           .toString()
+           .length == 12) {
+         _mobile = value;
+       }
+       else {
+         throw Exception("Invalid mobile number");
+       }
+     }
+
+     String get address => _address;
+
+     set address(String value) {
+       _address = value;
+     }
+
+     String get password => _password;
+
+     set password(String value) {
+       _password = value;
+       if (value
+           .length == 12) {
+         password = value;
+       }
+       else if (value
+           .length < 8) {
+         throw Exception("password must be more than 8 letters");
+       }
+       else {
+         throw Exception("password must be less than 12 letters");
+       }
+     }
+        displayInfo(){
+         print('Hello $name,your address is $address\n mobile number:$mobile');
+       }
+     }
+
+import 'Person.dart';
+class Customer extends person{ late double balance;
+  Customer(id, name, email, password, address,
+      mobile):super (id, name, email, password, address,
+      mobile);
+
+void makePayment(double amount) {
+  balance -= amount;}
+
+
+@override
+  displayInfo(){
+  super.displayInfo;
+  print('Your payment has been done successfully' );}
+  }
+import 'Person.dart';
+class Supplier extends person{
+    late double balance;
+  Supplier(id, name, email, password, address,
+      mobile):super (id, name, email, password, address,
+      mobile);
+  void receivePayment(double amount) {
+    balance += amount;
+    print('Payment of $amount made to $name');
+  }
+
+    @override
+    displayInfo(){
+      super.displayInfo;
+      print(' Payment has been  recieved successfully' );}
+}
+class Product {
+String name;
+double price;
+
+Product(this.name, this.price);
+}
+class Purchase {
+  Customer customer;
+  Supplier supplier;
+  Product product;
+  int quantity;
+
+  Purchase(this.customer, this.supplier, this.product, this.quantity);
+
+  double getTotalAmount() {
+    return product.price * quantity;
+  }
+
+  void processPurchase() {
+    double totalAmount = getTotalAmount();
+    customer.makePayment(totalAmount);
+    supplier.receivePayment(totalAmount);
+    print('Purchase of ${product.name} for $quantity units completed.');
+  }
+}
+class Payment {  double balance;
+  Customer customer;
+  double amount;
+
+  Payment(this.customer, this.amount,this.balance);
+  void makePayment(double amount) {
+    balance -= amount;
+   }
+  void processPayment() {
+  makePayment(amount);
+    print('Payment of $amount received from ${customer.name}');
+  }
+}
